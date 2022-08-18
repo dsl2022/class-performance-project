@@ -1,4 +1,10 @@
 export function Underlay() {
+  const date = new Date()
+  const firstDate = new Date("August 16, 2022 23:47:00")
+  // 86400000 millsec in a day
+  const numOfDays = Math.floor(Math.abs(date - firstDate) / 86400000)
+  const todayDate = date.toLocaleDateString()
+  const day = date.getDay()
   return (
     <div
       style={{
@@ -20,25 +26,25 @@ export function Underlay() {
             fontFamily: "'Antonio', sans-serif",
             flex: "1 1 0%",
             height: 30,
-            fontSize: 30,
+            fontSize: 40,
             fontWeight: "700",
             lineHeight: "30px",
             color: "black",
             letterSpacing: -2,
           }}>
-          POIMANDRES
+          NORC Ninja Python Group _
         </p>
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }}></div>
         <p style={{ flex: "1 1 0%", height: 30, fontSize: 30, lineHeight: "30px", textAlign: "right", color: "black" }}>⎑</p>
       </div>
       <div style={{ height: 60 }} />
       <div style={{ width: "100%", padding: 0, display: "inline-flex", flexDirection: "row", alignItems: "flex-start", justifyContent: "center" }}>
-        <p style={{ flex: "1 1 0%", height: "100%", fontSize: 12, lineHeight: "1.5em", color: "black" }}>
-          <b>Stones, Metals and Gems</b>
+        <p style={{ flex: "1 1 0%", height: "100%", fontSize: 15, lineHeight: "1.5em", color: "black" }}>
+          <b>{`{daily:"Code, Sleep and Eat"}`}</b>
           <br />
-          A Universal Deity
+          The best human beings
           <br />
-          <b>—</b>
+          <b>— //</b>
         </p>
         <div style={{ width: 10 }} />
         <p
@@ -68,9 +74,18 @@ export function Underlay() {
           alignItems: "flex-end",
           justifyContent: "center",
         }}>
-        <p style={{ flex: "1 1 0%", fontSize: 250, lineHeight: "1em", color: "black", margin: 0, letterSpacing: -10 }}>X</p>
+        <p style={{ flex: "1 1 0%", fontSize: 250, lineHeight: "1em", color: "black", margin: 0, letterSpacing: -10 }}>Y</p>
         <div style={{ width: 10 }} />
-        <p style={{ flex: "1 1 0%", fontSize: 250, lineHeight: "100%", textAlign: "right", color: "black", margin: 0, letterSpacing: -10 }}>01-</p>
+        <p
+          style={{
+            flex: "1 1 0%",
+            fontSize: 250,
+            lineHeight: "100%",
+            textAlign: "right",
+            color: "black",
+            margin: 0,
+            letterSpacing: -10,
+          }}>{`D ${numOfDays}`}</p>
       </div>
       <div style={{ height: 60 }} />
       <div
@@ -85,9 +100,8 @@ export function Underlay() {
           justifyContent: "center",
         }}>
         <p className="full" style={{ whiteSpace: "nowrap", flex: "1 1 0%", fontSize: 12, lineHeight: "1.5em", color: "black" }}>
-          <b>Wonders of Antiquity</b>
-          <br />
-          Pythagorean Mathematics
+          <b>{`print("work hard")`}</b>
+          <br />I love Python
         </p>
         <div style={{ width: 10 }} />
         <p
@@ -95,7 +109,7 @@ export function Underlay() {
           style={{
             fontFamily: "'Antonio', sans-serif",
             flex: "1 1 0%",
-            fontSize: 16,
+            fontSize: 26,
             fontWeight: "700",
             lineHeight: "1em",
             textAlign: "center",
@@ -103,7 +117,7 @@ export function Underlay() {
             letterSpacing: -0.5,
             whiteSpace: "nowrap",
           }}>
-          THE SUMMIT OF THE MANY
+          {todayDate}
         </p>
         <div style={{ width: 10 }} />
         <p className="full" style={{ flex: "1 1 0%", fontSize: 12, lineHeight: "1em", textAlign: "right", color: "black" }}></p>

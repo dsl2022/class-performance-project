@@ -2,14 +2,20 @@ import * as THREE from "three"
 import { useEffect } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { Physics, usePlane, useCompoundBody, useSphere } from "@react-three/cannon"
-import { Environment, useGLTF } from "@react-three/drei"
+import { Environment, useGLTF, useTexture, Html } from "@react-three/drei"
 import { EffectComposer, SSAO } from "@react-three/postprocessing"
-
+import { studentNames } from "./StudentNames"
 THREE.ColorManagement.legacyMode = false
 const baubleMaterial = new THREE.MeshStandardMaterial({ color: "#c0a090", emissive: "red", roughness: 0 })
 const capMaterial = new THREE.MeshStandardMaterial({ metalness: 0.6, roughness: 0.15, color: "#8a300f", emissive: "#600000", envMapIntensity: 20 })
-const sphereGeometry = new THREE.SphereGeometry(1, 28, 28)
-const baubles = [...Array(50)].map(() => ({ args: [0.6, 0.6, 1, 1, 1.25][Math.floor(Math.random() * 5)], mass: 1, angularDamping: 0.2, linearDamping: 0.95 }))
+const sphereGeometry = new THREE.SphereGeometry(1.1, 88, 88)
+const baubles = studentNames.map((name) => ({
+  args: [0.8, 0.6, 1, 1, 1.25][Math.floor(Math.random() * 5)],
+  name,
+  mass: 1,
+  angularDamping: 0.2,
+  linearDamping: 0.95,
+}))
 
 function Bauble({ vec = new THREE.Vector3(), ...props }) {
   const { nodes } = useGLTF("/cap.glb")
@@ -21,9 +27,16 @@ function Bauble({ vec = new THREE.Vector3(), ...props }) {
     ],
   }))
   useEffect(() => api.position.subscribe((p) => api.applyForce(vec.set(...p).normalize().multiplyScalar(-props.args * 35).toArray(), [0, 0, 0])), [api]) // prettier-ignore
+  const texture = useTexture("/cross.jpg")
   return (
     <group ref={ref} dispose={null}>
-      <mesh castShadow receiveShadow scale={props.args} geometry={sphereGeometry} material={baubleMaterial} />
+      <mesh castShadow receiveShadow scale={props.args} geometry={sphereGeometry} material={baubleMaterial}>
+        <Html distanceFactor={10}>
+          <a href="">
+            <div class="content">{props.name}</div>
+          </a>
+        </Html>
+      </mesh>
       <mesh castShadow scale={2.5 * props.args} position={[0, 0, -1.8 * props.args]} geometry={nodes.Mesh_1.geometry} material={capMaterial} />
     </group>
   )

@@ -38,6 +38,16 @@ a {
   text-decoration: none; /* no underline */
 }
 
+.content {
+  padding-top: 10px;
+  transform: translate3d(50%, 0, 0);
+  text-align: left;
+  background: #202035;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
 @media screen and (max-width: 568px) {
   .full {
     visibility: hidden;
