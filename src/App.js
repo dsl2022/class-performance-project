@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { Physics, usePlane, useCompoundBody, useSphere } from "@react-three/cannon"
 import { Environment, useGLTF, useTexture, Html } from "@react-three/drei"
@@ -9,13 +9,13 @@ THREE.ColorManagement.legacyMode = false
 const baubleMaterial = new THREE.MeshStandardMaterial({ color: "#c0a090", emissive: "red", roughness: 0 })
 const capMaterial = new THREE.MeshStandardMaterial({ metalness: 0.6, roughness: 0.15, color: "#8a300f", emissive: "#600000", envMapIntensity: 20 })
 const sphereGeometry = new THREE.SphereGeometry(1.1, 88, 88)
-const baubles = studentNames.map((name) => ({
-  args: [0.8, 0.6, 1, 1, 1.25][Math.floor(Math.random() * 5)],
-  name,
-  mass: 1,
-  angularDamping: 0.2,
-  linearDamping: 0.95,
-}))
+// const baubles = studentNames.map((name) => ({
+//   args: [0.8, 0.6, 1, 1, 1.25][Math.floor(Math.random() * 5)],
+//   name,
+//   mass: 1,
+//   angularDamping: 0.2,
+//   linearDamping: 0.95,
+// }))
 
 function Bauble({ vec = new THREE.Vector3(), ...props }) {
   const { nodes } = useGLTF("/cap.glb")
@@ -27,13 +27,13 @@ function Bauble({ vec = new THREE.Vector3(), ...props }) {
     ],
   }))
   useEffect(() => api.position.subscribe((p) => api.applyForce(vec.set(...p).normalize().multiplyScalar(-props.args * 35).toArray(), [0, 0, 0])), [api]) // prettier-ignore
-  const texture = useTexture("/cross.jpg")
   return (
     <group ref={ref} dispose={null}>
       <mesh castShadow receiveShadow scale={props.args} geometry={sphereGeometry} material={baubleMaterial}>
         <Html distanceFactor={10}>
           <a href="">
             <div class="content">{props.name}</div>
+            <div class="content">{props.score}</div>
           </a>
         </Html>
       </mesh>
@@ -52,25 +52,49 @@ function Collisions() {
   return useFrame((state) => api.position.set((state.mouse.x * viewport.width) / 2, (state.mouse.y * viewport.height) / 2, 2.5))
 }
 
-export const App = () => (
-  <Canvas
-    shadows
-    dpr={1.5}
-    gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
-    camera={{ position: [0, 0, 20], fov: 35, near: 10, far: 40 }}
-    onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}>
-    <ambientLight intensity={1} />
-    <spotLight position={[20, 20, 25]} penumbra={1} angle={0.2} color="white" castShadow shadow-mapSize={[512, 512]} />
-    <directionalLight position={[0, 5, -4]} intensity={4} />
-    <directionalLight position={[0, -15, -0]} intensity={4} color="red" />
-    <Physics gravity={[0, 0, 0]}>
-      <Collisions />
-      {baubles.map((props, i) => <Bauble key={i} {...props} />) /* prettier-ignore */}
-    </Physics>
-    <Environment files="/adamsbridge.hdr" />
-    <EffectComposer multisampling={0}>
-      <SSAO samples={11} radius={0.1} intensity={20} luminanceInfluence={0.6} color="red" />
-      <SSAO samples={21} radius={0.03} intensity={10} luminanceInfluence={0.6} color="red" />
-    </EffectComposer>
-  </Canvas>
-)
+export const App = () => {
+  const [data, setData] = useState([])
+  const URL = "https://bubble-2022.herokuapp.com/performance"
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(URL)
+        const data = await res.json()
+        setData(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+  const baubles = data.map((student) => ({
+    args: [0.8, 0.6, 1, 1, 1.25][Math.floor(Math.random() * 5)],
+    name: student.name,
+    score: student.impressionScore,
+    mass: 1,
+    angularDamping: 0.2,
+    linearDamping: 0.95,
+  }))
+  return (
+    <Canvas
+      shadows
+      dpr={1.5}
+      gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
+      camera={{ position: [0, 0, 20], fov: 35, near: 10, far: 40 }}
+      onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}>
+      <ambientLight intensity={1} />
+      <spotLight position={[20, 20, 25]} penumbra={1} angle={0.2} color="white" castShadow shadow-mapSize={[512, 512]} />
+      <directionalLight position={[0, 5, -4]} intensity={4} />
+      <directionalLight position={[0, -15, -0]} intensity={4} color="red" />
+      <Physics gravity={[0, 0, 0]}>
+        <Collisions />
+        {baubles.map((props, i) => <Bauble key={i} {...props} />) /* prettier-ignore */}
+      </Physics>
+      <Environment files="/adamsbridge.hdr" />
+      <EffectComposer multisampling={0}>
+        <SSAO samples={11} radius={0.1} intensity={20} luminanceInfluence={0.6} color="red" />
+        <SSAO samples={21} radius={0.03} intensity={10} luminanceInfluence={0.6} color="red" />
+      </EffectComposer>
+    </Canvas>
+  )
+}
